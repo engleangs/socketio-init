@@ -1,5 +1,6 @@
 const  kafkaNode = require('kafka-node');
 const config = require('./config')
+const  uuid = require('uuid')
 const kafka = {
     ready:false,
     onReady:()=>{},
@@ -9,8 +10,9 @@ const kafka = {
     onReceiveMessage:(message)=>{},
     replyMessage: (message,callback)=>{
         if( kafka.ready){
+            let id = uuid.v4();
             let payload = [
-                {topic : config.kafka_topic.fb_message_send_topic, message: message}
+                {topic : config.kafka_topic.fb_message_send_topic, messages: [message]  , key: id}
             ];
             kafka.producer.send( payload, (err,data)=>{
                if(err){
@@ -46,6 +48,7 @@ producer.on('ready', function () {
     if( kafka.queue.length > 0) {
         kafka.queue.forEach((val,inx)=>{
            kafka.replyMessage( val, (resp)=>{
+               console.log("msg to send : ",val)
                console.log("retry send msg " ,resp);
            } );
         });
@@ -77,5 +80,14 @@ consumer.on('message',message => {
 kafka.client = client;
 kafka.consumer = consumer;
 producer.on('error', function (err) {});
+var data = {
+    'page_id':'678898225861636',
+    'receipt_id':'678898225861636',
+    'message':'hello'
+};
+const str = JSON.stringify( data );
+kafka.replyMessage( str , function ( data) {
+   console.log( 'resp from kafka', data);
+});
 module.exports = kafka;
 
