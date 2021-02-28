@@ -18,10 +18,10 @@ config.auth=  {
 config.kafka = {
     kafkaHost:"164.90.223.82:9092",
 
-}
+};
 config.kafka_topic = {
     fb_message_receive_topic:"fb_receive_message",
     fb_message_send_topic:"fb_reply_message"
-}
+};
 
 module.exports  = config

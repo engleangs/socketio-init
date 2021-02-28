@@ -106,3 +106,5 @@ function isValid() {
     return true;//todo
 }
 module.exports = socket;
+//todo: when receiving mesage from chat java script forward it to kafka immediately
+//todo : when receiging message from chat from kafka foward it to socket immediately but need to do routing ( come from which page and which current user is online now )
