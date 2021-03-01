@@ -7,7 +7,7 @@ const kafka = {
     producer:null,
     consumer:null,
     queue :[],
-    onReceiveMessage:(message)=>{},
+    onReceiveMessage:null,
     replyMessage: (message,callback)=>{
         if( kafka.ready){
             let id = uuid.v4();
@@ -63,13 +63,19 @@ producer.on('ready', function () {
 kafka.producer = producer;
 let consumer = new kafkaNode.Consumer( client, [
         {
-            topic: config.kafka_topic.fb_message_receive_topic
+            topic: config.kafka_topic.fb_message_receive_topic,
+
         }
     ],
     {
-        autoCommit: false,
+        autoCommit: true,
+        autoCommitIntervalMs: 5000,
         encoding: 'utf8',
-        keyEncoding: 'utf8'
+        keyEncoding: 'utf8',
+        fromOffset: false,
+        'groupId':"chat_consumer_group",
+        autoCommitIntervalMs:1000,
+        id:'chat_consumer_1'
     });
 consumer.on('message',message => {
     console.log('receive message from kafka', message);
@@ -80,16 +86,26 @@ consumer.on('message',message => {
 kafka.client = client;
 kafka.consumer = consumer;
 producer.on('error', function (err) {});
-var data = {
-    'page_id':'678898225861636',
-    'receipt_id':'3548272971904782',
-    'message':'hello',
-    'type':'text'
 
-};
-const str = JSON.stringify( data );
-kafka.replyMessage( str , function ( data) {
-   console.log( 'resp from kafka', data);
-});
+// test sending
+// var data = {
+//     'page_id':'678898225861636',
+//     'receipt_id':'3548272971904782',
+//     'message':'hello',
+//     'type':'text'
+//
+// };
+// const str = JSON.stringify( data );
+// kafka.replyMessage( str , function ( data) {
+//    console.log( 'resp from kafka', data);
+// });
 module.exports = kafka;
+process.on('SIGINT',async ()=>{
+    consumer.close(true,(error)=>{
+        if( error) {
+            console.log('kafka consumer client error ',error);
+        }
 
+    });
+    process.exit(0);
+});

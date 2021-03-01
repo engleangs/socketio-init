@@ -60,4 +60,27 @@ db.user = ( username, successCallBack , errorCallBack)=>{
     });
 
 };
+
+db.customer = ( id, successCallback, errorCallback) => {
+  connection.query("SELECT * FROM ecom_customers WHERE id = ?",[ id],(errors, result, fields)=>{
+      if( errors) {
+          console.log('error call to mysql for this customer : ',id, errors);
+          errorCallback( errors);
+      }
+      else {
+         if( result.length > 0) {
+             let customer = {
+                 id : result[0].id,
+                 name : result[0].name,
+                 photo : result[0].photo,
+                 companyId: result[0].company_id,
+             }
+             successCallback(customer);
+         }
+         else {
+             successCallback( {});
+         }
+      }
+  });
+};
 module.exports  = db;
