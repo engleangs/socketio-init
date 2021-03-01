@@ -31,6 +31,7 @@ socket.connect = ( my_socket )=>{
     // handle the event sent with socket.send()
     my_socket.on('message', (data) => {
         console.log( 'receiving message ',data);
+        
         var rnd = chat.random_integer(2)+1;
         if( rnd %2 ==1){
             //my_socket.emit('message', socket.text_msg(  chat.random_reply()) );//auto reply

@@ -82,8 +82,10 @@ kafka.consumer = consumer;
 producer.on('error', function (err) {});
 var data = {
     'page_id':'678898225861636',
-    'receipt_id':'678898225861636',
-    'message':'hello'
+    'receipt_id':'3548272971904782',
+    'message':'hello',
+    'type':'text'
+
 };
 const str = JSON.stringify( data );
 kafka.replyMessage( str , function ( data) {
